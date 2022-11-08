@@ -22,3 +22,11 @@ func (sqlModel *SQLModel) PrepareForInsert() {
 	sqlModel.CreatedAt = &now
 	sqlModel.UpdateAt = &now
 }
+
+func (sqlModel *SQLModel) GetRealId() {
+	if sqlModel.FakeId == nil {
+		return
+	}
+
+	sqlModel.Id = int(sqlModel.FakeId.GetLocalID())
+}

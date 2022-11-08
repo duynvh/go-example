@@ -13,13 +13,22 @@ var (
 
 type Restaurant struct {
 	common.SQLModel
-	OwnerId int    `json:"owner_id" gorm:"column:owner_id;"`
-	Name    string `json:"name" gorm:"column:name;"`
-	Addr    string `json:"address" gorm:"column:addr;"`
+	OwnerId     int                `json:"-" gorm:"column:owner_id;"`
+	FakeOwnerId *common.UID        `json:"owner_id" gorm:"-"`
+	Name        string             `json:"name" gorm:"column:name;"`
+	Addr        string             `json:"address" gorm:"column:addr;"`
+	Owner       *common.SimpleUser `json:"owner" gorm:"foreignKey:OwnerId;PRELOAD:false;"`
 }
 
 func (r *Restaurant) Mask(isAdminOrOwner bool) {
 	r.SQLModel.Mask(common.DbTypeRestaurant)
+
+	fakeOwnerId := common.NewUID(uint32(r.OwnerId), int(common.DbTypeUser), 1)
+	r.FakeOwnerId = &fakeOwnerId
+
+	if v := r.Owner; v != nil {
+		v.Mask(common.DbTypeUser)
+	}
 }
 
 func (Restaurant) TableName() string {
@@ -37,8 +46,9 @@ func (RestaurantUpdate) TableName() string {
 
 type RestaurantCreate struct {
 	common.SQLModel
-	Name string `json:"name" gorm:"column:name;"`
-	Addr string `json:"address" gorm:"column:addr;"`
+	Name    string `json:"name" gorm:"column:name;"`
+	OwnerId int    `json:"owner_id" gorm:"column:owner_id;"`
+	Addr    string `json:"address" gorm:"column:addr;"`
 }
 
 func (RestaurantCreate) TableName() string {

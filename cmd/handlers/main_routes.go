@@ -31,7 +31,7 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 
 		restaurants := v1.Group("/restaurants")
 		{
-			restaurants.POST("", restaurantgin.CreateRestaurantHandler(sc))
+			restaurants.POST("", middleware.RequiredAuth(sc, userStore), restaurantgin.CreateRestaurantHandler(sc))
 			restaurants.GET("", restaurantgin.ListRestaurant(sc))
 			restaurants.GET("/:restaurant_id", restaurantgin.GetRestaurantHandler(sc))
 			restaurants.PUT("/:restaurant_id", restaurantgin.UpdateRestaurantHandler(sc))

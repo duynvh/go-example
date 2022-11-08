@@ -3,9 +3,11 @@ package jwt
 import (
 	"flag"
 	"fmt"
+	"food-delivery-service/common"
 	"food-delivery-service/plugin/tokenprovider"
-	"github.com/dgrijalva/jwt-go"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 type jwtProvider struct {
@@ -18,7 +20,7 @@ func NewTokenJWTProvider(prefix string) *jwtProvider {
 }
 
 type myClaims struct {
-	Payload tokenprovider.TokenPayload `json:"payload"`
+	Payload common.TokenPayload `json:"payload"`
 	jwt.StandardClaims
 }
 
@@ -41,7 +43,10 @@ func (j *jwtProvider) Generate(data tokenprovider.TokenPayload, expiry int) (tok
 	now := time.Now()
 
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, myClaims{
-		data,
+		common.TokenPayload{
+			UId: data.UserId(),
+			URole: data.Role(),
+		},
 		jwt.StandardClaims{
 			ExpiresAt: now.Local().Add(time.Second * time.Duration(expiry)).Unix(),
 			IssuedAt:  now.Local().Unix(),

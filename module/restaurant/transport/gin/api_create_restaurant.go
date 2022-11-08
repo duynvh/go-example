@@ -28,6 +28,10 @@ func CreateRestaurantHandler(sc goservice.ServiceContext) gin.HandlerFunc {
 			return
 		}
 
+		u := c.MustGet(common.CurrentUser).(common.Requester)
+
+		data.OwnerId = u.GetUserId()
+
 		db := sc.MustGet(common.DBMain).(*gorm.DB)
 		storage := restaurantstorage.NewSQLStore(db)
 		//storage := &mockCreateStore{}

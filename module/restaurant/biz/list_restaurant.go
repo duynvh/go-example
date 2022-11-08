@@ -6,21 +6,20 @@ import (
 	restaurantmodel "food-delivery-service/module/restaurant/model"
 )
 
-type ListRestaurantStore interface {
+type ListRestaurantRepo interface {
 	ListRestaurant(
 		ctx context.Context,
 		filter *restaurantmodel.Filter,
 		paging *common.Paging,
-		moreKeys ...string,
 	) ([]restaurantmodel.Restaurant, error)
 }
 
-func NewListRestaurantBiz(store ListRestaurantStore) *listRestaurantBiz {
+func NewListRestaurantBiz(store ListRestaurantRepo) *listRestaurantBiz {
 	return &listRestaurantBiz{store: store}
 }
 
 type listRestaurantBiz struct {
-	store ListRestaurantStore
+	store ListRestaurantRepo
 }
 
 func (biz *listRestaurantBiz) ListRestaurant(

@@ -31,7 +31,15 @@ func (store sqlStore) ListRestaurant(
 	}
 
 	if err := db.Table(restaurantmodel.Restaurant{}.TableName()).
-		Count(&paging.Total).
+		Count(&paging.Total).Error; err != nil {
+		return nil, common.ErrDB(err)
+	}
+
+	for i := range moreKeys {
+		db = db.Preload(moreKeys[i])
+	}
+
+	if err := db.Table(restaurantmodel.Restaurant{}.TableName()).
 		Limit(paging.Limit).
 		Order("id desc").
 		Find(&result).Error; err != nil {

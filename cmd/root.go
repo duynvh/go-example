@@ -46,6 +46,7 @@ var rootCmd = &cobra.Command{
 			})
 
 			handlers.MainRoute(engine, service)
+			handlers.InternalRoute(engine, service)
 		})
 
 		if err := service.Start(); err != nil {

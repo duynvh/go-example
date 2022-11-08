@@ -58,7 +58,7 @@ func RequiredAuth(sc goservice.ServiceContext, authStore AuthenStore) func(c *gi
 		//
 		//user, err := store.FindUser(c.Request.Context(), map[string]interface{}{"id": payload.UserId})
 
-		user, err := authStore.FindUser(c.Request.Context(), map[string]interface{}{"id": payload.UserId})
+		user, err := authStore.FindUser(c.Request.Context(), map[string]interface{}{"id": payload.UserId()})
 
 		if err != nil {
 			panic(err)
