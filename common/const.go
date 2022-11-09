@@ -10,8 +10,9 @@ const (
 const (
 	CurrentUser = "user"
 
-	DBMain      = "mysql"
-	JWTProvider = "jwt"
+	DBMain            = "mysql"
+	JWTProvider       = "jwt"
+	PluginUserService = "user-service"
 )
 
 type Requester interface {

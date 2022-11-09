@@ -7,6 +7,7 @@ import (
 	"food-delivery-service/middleware"
 	// "food-delivery-service/plugin/sdkgorm"
 	"food-delivery-service/plugin/tokenprovider/jwt"
+	"food-delivery-service/plugin/remotecall"
 	goservice "github.com/200Lab-Education/go-sdk"
 	sdkgorm "github.com/200Lab-Education/go-sdk/plugin/storage/sdkgorm"
 	"github.com/gin-gonic/gin"
@@ -21,6 +22,7 @@ func newService() goservice.Service {
 		goservice.WithVersion("1.0.0"),
 		goservice.WithInitRunnable(sdkgorm.NewGormDB("main", common.DBMain)),
 		goservice.WithInitRunnable(jwt.NewTokenJWTProvider(common.JWTProvider)),
+		goservice.WithInitRunnable(remotecall.NewUserService()),
 	)
 
 	return service

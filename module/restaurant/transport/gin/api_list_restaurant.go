@@ -1,12 +1,14 @@
 package restaurantgin
 
 import (
+	"context"
 	"food-delivery-service/common"
 	restaurantbiz "food-delivery-service/module/restaurant/biz"
 	restaurantmodel "food-delivery-service/module/restaurant/model"
 	restaurantrepo "food-delivery-service/module/restaurant/repo"
 	restaurantstorage "food-delivery-service/module/restaurant/storage"
-	restaurantapi "food-delivery-service/module/restaurant/storage/remoteapi"
+
+	// restaurantapi "food-delivery-service/module/restaurant/storage/remoteapi"
 	"net/http"
 
 	goservice "github.com/200Lab-Education/go-sdk"
@@ -35,9 +37,12 @@ func ListRestaurant(sc goservice.ServiceContext) gin.HandlerFunc {
 		db := sc.MustGet(common.DBMain).(*gorm.DB)
 		store := restaurantstorage.NewSQLStore(db)
 		//userStore := userstorage.NewSQLStore(db)
-		userStore := restaurantapi.NewUserApi("http://localhost:3000")
+		// userStore := restaurantapi.NewUserApi("http://localhost:3000")
+		userService := sc.MustGet(common.PluginUserService).(interface {
+			GetUsers(ctx context.Context, ids []int) ([]common.SimpleUser, error)
+		})
 
-		repo := restaurantrepo.NewListRestaurantRepo(store, userStore)
+		repo := restaurantrepo.NewListRestaurantRepo(store, userService)
 		biz := restaurantbiz.NewListRestaurantBiz(repo)
 
 		result, err := biz.ListRestaurant(c.Request.Context(), &filter, &paging)
