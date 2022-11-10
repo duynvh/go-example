@@ -6,10 +6,12 @@ import (
 	restaurantgin "food-delivery-service/module/restaurant/transport/gin"
 	userstorage "food-delivery-service/module/user/storage"
 	usergin "food-delivery-service/module/user/transport/gin"
+	restaurantlikegin "food-delivery-service/module/restaurantlike/transport/gin"
+	"net/http"
+
 	goservice "github.com/200Lab-Education/go-sdk"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"net/http"
 )
 
 func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
@@ -36,6 +38,10 @@ func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 			restaurants.GET("/:restaurant_id", restaurantgin.GetRestaurantHandler(sc))
 			restaurants.PUT("/:restaurant_id", restaurantgin.UpdateRestaurantHandler(sc))
 			restaurants.DELETE("/:restaurant_id", restaurantgin.DeleteRestaurantHandler(sc))
+
+			restaurants.POST("/:restaurant_id/like", middleware.RequiredAuth(sc, userStore), restaurantlikegin.UserLikeRestaurant(sc))
+			restaurants.DELETE("/:restaurant_id/dislike", middleware.RequiredAuth(sc, userStore), restaurantlikegin.UserDislikeRestaurant(sc))
+			restaurants.GET("/:restaurant_id/liked-users", middleware.RequiredAuth(sc, userStore), restaurantlikegin.ListUsers(sc))
 		}
 	}
 }

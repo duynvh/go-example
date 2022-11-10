@@ -17,6 +17,8 @@ type Restaurant struct {
 	FakeOwnerId *common.UID        `json:"owner_id" gorm:"-"`
 	Name        string             `json:"name" gorm:"column:name;"`
 	Addr        string             `json:"address" gorm:"column:addr;"`
+	LikedCount  int                `json:"liked_count" gorm:"column:liked_count;"`
+	Liked       bool               `json:"liked" gorm:"-"`
 	Owner       *common.SimpleUser `json:"owner" gorm:"foreignKey:OwnerId;PRELOAD:false;"`
 }
 
