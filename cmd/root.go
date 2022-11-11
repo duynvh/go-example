@@ -5,15 +5,20 @@ import (
 	"food-delivery-service/cmd/handlers"
 	"food-delivery-service/common"
 	"food-delivery-service/middleware"
+	"food-delivery-service/pubsub/localpb"
+
+	appnats "food-delivery-service/pubsub/nats"
+
 	// "food-delivery-service/plugin/sdkgorm"
-	"food-delivery-service/plugin/tokenprovider/jwt"
 	"food-delivery-service/plugin/remotecall"
+	"food-delivery-service/plugin/tokenprovider/jwt"
+	"net/http"
+	"os"
+
 	goservice "github.com/200Lab-Education/go-sdk"
 	sdkgorm "github.com/200Lab-Education/go-sdk/plugin/storage/sdkgorm"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
-	"net/http"
-	"os"
 )
 
 func newService() goservice.Service {
@@ -23,6 +28,8 @@ func newService() goservice.Service {
 		goservice.WithInitRunnable(sdkgorm.NewGormDB("main", common.DBMain)),
 		goservice.WithInitRunnable(jwt.NewTokenJWTProvider(common.JWTProvider)),
 		goservice.WithInitRunnable(remotecall.NewUserService()),
+		goservice.WithInitRunnable(localpb.NewPubSub(common.PluginPubSub)),
+		goservice.WithInitRunnable(appnats.NewNATS(common.PluginNATS)),
 	)
 
 	return service
@@ -61,6 +68,9 @@ func Execute() {
 	// TransAddPoint outenv as a sub command
 	rootCmd.AddCommand(outEnvCmd)
 	rootCmd.AddCommand(cronjob)
+
+	rootCmd.AddCommand(startSubUserLikedRestaurantCmd)
+	rootCmd.AddCommand(startSubUserDislikedRestaurantCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

@@ -2,14 +2,15 @@ package restaurantlikegin
 
 import (
 	"food-delivery-service/common"
-	restaurantstorage "food-delivery-service/module/restaurant/storage"
 	restaurantlikebiz "food-delivery-service/module/restaurantlike/biz"
 	restaurantlikemodel "food-delivery-service/module/restaurantlike/model"
 	restaurantlikestore "food-delivery-service/module/restaurantlike/store"
+	"food-delivery-service/pubsub"
+	"net/http"
+
 	goservice "github.com/200Lab-Education/go-sdk"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"net/http"
 )
 
 // POST /v1/restaurants/:id/like // RPC-RestAPI
@@ -31,10 +32,11 @@ func UserLikeRestaurant(sc goservice.ServiceContext) gin.HandlerFunc {
 		}
 
 		db := sc.MustGet(common.DBMain).(*gorm.DB)
+		ps := sc.MustGet(common.PluginPubSub).(pubsub.PubSub)
 
 		store := restaurantlikestore.NewSQLStore(db)
-		incStore := restaurantstorage.NewSQLStore(db)
-		biz := restaurantlikebiz.NewUserLikeRestaurantBiz(store, incStore)
+		// incStore := restaurantstorage.NewSQLStore(db)
+		biz := restaurantlikebiz.NewUserLikeRestaurantBiz(store, ps)
 
 		if err := biz.LikeRestaurant(c.Request.Context(), &data); err != nil {
 			panic(err)

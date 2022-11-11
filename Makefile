@@ -16,6 +16,9 @@ rundb:
 	-v /home/duynvh/Documents/code/go/go-example/.docker:/bitnami \
 	bitnami/mysql:8.0
 
+runnat:
+	@docker run -d --name nats --network ${DOCKER_NETWORK} --rm -p 4222:4222 -p 8222:8222 nats --http_port 8222
+
 startdb:
 	@docker start mysql
 
@@ -42,4 +45,4 @@ runapp:
 	-e USER_SERVICE_URL=${USER_SERVICE_URL} \
 	nguyenvohoangduy/go-example
 
-.PHONY: rundb startdb migrateup start runapp
+.PHONY: rundb startdb migrateup start runapp runnat

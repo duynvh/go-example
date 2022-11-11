@@ -13,6 +13,12 @@ const (
 	DBMain            = "mysql"
 	JWTProvider       = "jwt"
 	PluginUserService = "user-service"
+	PluginPubSub = "pubsub"
+	PluginNATS = "nats"
+
+	// PubSub Topics
+	TopicUserLikeRestaurant = "restaurant.liked"
+	TopicUserDislikeRestaurant = "restaurant.disliked"
 )
 
 type Requester interface {
