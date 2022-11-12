@@ -13,11 +13,12 @@ const (
 	DBMain            = "mysql"
 	JWTProvider       = "jwt"
 	PluginUserService = "user-service"
-	PluginPubSub = "pubsub"
-	PluginNATS = "nats"
+	PluginPubSub      = "pubsub"
+	PluginNATS        = "nats"
+	PluginRedis       = "redis"
 
 	// PubSub Topics
-	TopicUserLikeRestaurant = "restaurant.liked"
+	TopicUserLikeRestaurant    = "restaurant.liked"
 	TopicUserDislikeRestaurant = "restaurant.disliked"
 )
 

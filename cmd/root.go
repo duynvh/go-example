@@ -10,6 +10,7 @@ import (
 	appnats "food-delivery-service/pubsub/nats"
 
 	// "food-delivery-service/plugin/sdkgorm"
+	"food-delivery-service/plugin/appredis"
 	"food-delivery-service/plugin/remotecall"
 	"food-delivery-service/plugin/tokenprovider/jwt"
 	"net/http"
@@ -30,6 +31,7 @@ func newService() goservice.Service {
 		goservice.WithInitRunnable(remotecall.NewUserService()),
 		goservice.WithInitRunnable(localpb.NewPubSub(common.PluginPubSub)),
 		goservice.WithInitRunnable(appnats.NewNATS(common.PluginNATS)),
+		goservice.WithInitRunnable(appredis.NewRedisDB("redis", common.PluginRedis)),
 	)
 
 	return service

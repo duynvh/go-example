@@ -4,19 +4,24 @@ import (
 	"food-delivery-service/common"
 	"food-delivery-service/middleware"
 	restaurantgin "food-delivery-service/module/restaurant/transport/gin"
+	restaurantlikegin "food-delivery-service/module/restaurantlike/transport/gin"
 	userstorage "food-delivery-service/module/user/storage"
 	usergin "food-delivery-service/module/user/transport/gin"
-	restaurantlikegin "food-delivery-service/module/restaurantlike/transport/gin"
 	"net/http"
 
 	goservice "github.com/200Lab-Education/go-sdk"
 	"github.com/gin-gonic/gin"
+	"food-delivery-service/cache"
 	"gorm.io/gorm"
 )
 
 func MainRoute(router *gin.Engine, sc goservice.ServiceContext) {
 	dbConn := sc.MustGet(common.DBMain).(*gorm.DB)
-	userStore := userstorage.NewSQLStore(dbConn)
+	// userStore := userstorage.NewSQLStore(dbConn)
+	userStore := cache.NewAuthUserCached(
+		userstorage.NewSQLStore(dbConn),
+		cache.NewRedisCache(sc),
+	)
 
 	v1 := router.Group("/v1")
 	{
