@@ -48,4 +48,7 @@ runapp:
 	-e USER_SERVICE_URL=${USER_SERVICE_URL} \
 	nguyenvohoangduy/go-example
 
-.PHONY: rundb startdb migrateup start runapp runnats runredis
+bufgenerate:
+	buf generate
+
+.PHONY: rundb startdb migrateup start runapp runnats runredis bufgenerate

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package demo;
+
+option go_package = "user/";
+
+import "google/api/annotations.proto";
+
+message UserRequest {
+  repeated int32 userIds = 1;
+}
+
+message User {
+  string id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string role = 4;
+}
+
+message UserResponse {
+  repeated User users = 1;
+}
+
+service UserService {
+  rpc GetUserByIds(UserRequest) returns (UserResponse) {
+    option (google.api.http) = {
+      post: "/v1/example/get-users-by-ids"
+      body: "*"
+    };
+  };
+}
