@@ -38,7 +38,7 @@ func ListRestaurant(sc goservice.ServiceContext) gin.HandlerFunc {
 		store := restaurantstorage.NewSQLStore(db)
 		//userStore := userstorage.NewSQLStore(db)
 		// userStore := restaurantapi.NewUserApi("http://localhost:3000")
-		userService := sc.MustGet(common.PluginUserService).(interface {
+		userService := sc.MustGet(common.PluginGrpcUserClient).(interface {
 			GetUsers(ctx context.Context, ids []int) ([]common.SimpleUser, error)
 		})
 

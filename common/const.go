@@ -10,12 +10,14 @@ const (
 const (
 	CurrentUser = "user"
 
-	DBMain            = "mysql"
-	JWTProvider       = "jwt"
-	PluginUserService = "user-service"
-	PluginPubSub      = "pubsub"
-	PluginNATS        = "nats"
-	PluginRedis       = "redis"
+	DBMain               = "mysql"
+	JWTProvider          = "jwt"
+	PluginUserService    = "user-service"
+	PluginPubSub         = "pubsub"
+	PluginNATS           = "nats"
+	PluginRedis          = "redis"
+	PluginGrpcServer     = "grpc-server"
+	PluginGrpcUserClient = "grpc-user-client"
 
 	// PubSub Topics
 	TopicUserLikeRestaurant    = "restaurant.liked"

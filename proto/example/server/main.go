@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 	user "food-delivery-service/proto"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net"
 	"net/http"
+
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type server struct{}
@@ -20,7 +21,7 @@ func (s *server) GetUserByIds(ctx context.Context, request *user.UserRequest) (*
 	return &user.UserResponse{
 		Users: []*user.User{
 			{
-				Id:        "1",
+				Id:        "2",
 				FirstName: "Viet",
 				LastName:  "Tran",
 				Role:      "user",

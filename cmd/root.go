@@ -5,14 +5,18 @@ import (
 	"food-delivery-service/cmd/handlers"
 	"food-delivery-service/common"
 	"food-delivery-service/middleware"
+	userstorage "food-delivery-service/module/user/storage"
+	"food-delivery-service/module/user/storage/grpcstore"
 	"food-delivery-service/pubsub/localpb"
 
 	appnats "food-delivery-service/pubsub/nats"
 
 	// "food-delivery-service/plugin/sdkgorm"
 	"food-delivery-service/plugin/appredis"
-	"food-delivery-service/plugin/remotecall"
+	appgrpc "food-delivery-service/plugin/remotecall/grpc"
+	"food-delivery-service/plugin/remotecall/restful"
 	"food-delivery-service/plugin/tokenprovider/jwt"
+	user "food-delivery-service/proto"
 	"net/http"
 	"os"
 
@@ -20,6 +24,8 @@ import (
 	sdkgorm "github.com/200Lab-Education/go-sdk/plugin/storage/sdkgorm"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
+	"gorm.io/gorm"
 )
 
 func newService() goservice.Service {
@@ -28,10 +34,12 @@ func newService() goservice.Service {
 		goservice.WithVersion("1.0.0"),
 		goservice.WithInitRunnable(sdkgorm.NewGormDB("main", common.DBMain)),
 		goservice.WithInitRunnable(jwt.NewTokenJWTProvider(common.JWTProvider)),
-		goservice.WithInitRunnable(remotecall.NewUserService()),
+		goservice.WithInitRunnable(restful.NewUserService()),
 		goservice.WithInitRunnable(localpb.NewPubSub(common.PluginPubSub)),
 		goservice.WithInitRunnable(appnats.NewNATS(common.PluginNATS)),
 		goservice.WithInitRunnable(appredis.NewRedisDB("redis", common.PluginRedis)),
+		goservice.WithInitRunnable(appgrpc.NewGRPCServer(common.PluginGrpcServer)),
+		goservice.WithInitRunnable(appgrpc.NewUserClient(common.PluginGrpcUserClient)),
 	)
 
 	return service
@@ -44,6 +52,12 @@ var rootCmd = &cobra.Command{
 		service := newService()
 
 		serviceLogger := service.Logger("service")
+		service.MustGet(common.PluginGrpcServer).(interface {
+			SetRegisterHdl(hdl func(*grpc.Server))
+		}).SetRegisterHdl(func(server *grpc.Server) {
+			dbConn := service.MustGet(common.DBMain).(*gorm.DB)
+			user.RegisterUserServiceServer(server, grpcstore.NewGRPCStore(userstorage.NewSQLStore(dbConn)))
+		})
 
 		if err := service.Init(); err != nil {
 			serviceLogger.Fatalln(err)
